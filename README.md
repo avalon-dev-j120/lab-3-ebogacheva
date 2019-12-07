@@ -102,7 +102,7 @@ import java.awt.event.*;
 import java.awt.datatransfer.*;
 import javax.swing.*;
 
-public class ClipboardExample extends JFrame {
+public class СolorPalette extends JFrame {
 	/**
 	 * Кнопка инициации копирования текста в буфер обмена. 
 	 */
@@ -118,7 +118,7 @@ public class ClipboardExample extends JFrame {
             .getDefaultToolkit()
             .getSystemClipboard();
 
-    public ClipboardExample() {
+    public СolorPalette() {
         // настраиваем окно
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
