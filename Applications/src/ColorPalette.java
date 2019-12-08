@@ -1,9 +1,11 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.Dictionary;
-import java.util.Hashtable;
 
-public class ColorPalette extends JFrame {
+
+public class ColorPalette extends JFrame implements ChangeListener {
 
     private JPanel color;
 
@@ -20,7 +22,7 @@ public class ColorPalette extends JFrame {
     private final Font labelFont = new Font("Arial", Font.PLAIN, 12);
 
 
-    public ColorPalette() {
+    public ColorPalette()  {
 
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -44,7 +46,7 @@ public class ColorPalette extends JFrame {
 
             color = new JPanel();
             color.setPreferredSize(new Dimension(100, 100));
-            color.setBackground(new Color(23, 57, 88));
+            color.setBackground(new Color(125, 125, 125));
 
             container.add(color, constraintsColor);
         }
@@ -69,9 +71,9 @@ public class ColorPalette extends JFrame {
             GridBagConstraints constraintsLabelSet = new GridBagConstraints();
             constraintsLabelSet.gridx = 4;
             constraintsLabelSet.gridy = 0;
-            constraintsLabelSet.weightx = 0.5;
+            constraintsLabelSet.weightx = 0.2;
             constraintsLabelSet.weighty = 2;
-            constraintsLabelSet.insets = new Insets(0, 5, 25, 5);
+            constraintsLabelSet.insets = new Insets(0, 5, 25, 0);
             constraintsLabelSet.anchor = GridBagConstraints.LINE_START;
             constraintsLabelSet.fill = GridBagConstraints.BOTH;
 
@@ -90,6 +92,7 @@ public class ColorPalette extends JFrame {
                 dictionary.remove(i);
                 i = i + 17;
             }
+            sliderRed.addChangeListener(this);
             sliderRed.setPaintTicks(true);
             sliderGreen = new JSlider(0, 255, 125);
             sliderGreen.setMajorTickSpacing(17);
@@ -101,6 +104,7 @@ public class ColorPalette extends JFrame {
                 dictionary2.remove(i2);
                 i2 = i2 + 17;
             }
+            sliderGreen.addChangeListener(this);
             sliderGreen.setPaintTicks(true);
             sliderBlue = new JSlider(0, 255, 125);
             sliderBlue.setMajorTickSpacing(17);
@@ -113,6 +117,7 @@ public class ColorPalette extends JFrame {
                 i3 = i3 + 17;
             }
             sliderBlue.setPaintTicks(true);
+            sliderBlue.addChangeListener(this);
 
             sliderSet = new JPanel();
             GridLayout sliderSetLayout = new GridLayout(3, 1);
@@ -126,7 +131,7 @@ public class ColorPalette extends JFrame {
             constraintsSliderSet.gridy = 0;
             constraintsSliderSet.weightx = 4;
             constraintsSliderSet.weighty = 2;
-            constraintsSliderSet.insets = new Insets(10,5,5,5);
+            constraintsSliderSet.insets = new Insets(10,0,5,5);
             constraintsSliderSet.fill = GridBagConstraints.BOTH;
 
             container.add(sliderSet, constraintsSliderSet);
@@ -136,6 +141,12 @@ public class ColorPalette extends JFrame {
 
         setVisible(true);
 
-
     }
+    @Override
+    public void stateChanged(ChangeEvent event){
+        if(event.getSource() == sliderRed || event.getSource() == sliderBlue || event.getSource() == sliderGreen){
+            color.setBackground(new Color(sliderRed.getValue(), sliderGreen.getValue(), sliderBlue.getValue()));
+        }
+    }
+
 }
