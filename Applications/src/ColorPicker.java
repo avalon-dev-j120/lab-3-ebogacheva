@@ -2,10 +2,12 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.Dictionary;
 
 
-public class ColorPalette extends JFrame implements ChangeListener {
+public class ColorPicker extends JFrame implements ChangeListener {
 
     private JPanel color;
 
@@ -22,7 +24,7 @@ public class ColorPalette extends JFrame implements ChangeListener {
     private final Font labelFont = new Font("Arial", Font.PLAIN, 12);
 
 
-    public ColorPalette()  {
+    public ColorPicker()  {
 
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -33,6 +35,7 @@ public class ColorPalette extends JFrame implements ChangeListener {
         Container container = getContentPane();
         GridBagLayout layout = new GridBagLayout();
         container.setLayout(layout);
+        ToolTipManager.sharedInstance().setInitialDelay(100);
 
         // Initialization of the ColorPanel
         {
@@ -47,6 +50,8 @@ public class ColorPalette extends JFrame implements ChangeListener {
             color = new JPanel();
             color.setPreferredSize(new Dimension(100, 100));
             color.setBackground(new Color(125, 125, 125));
+
+            toolTipColorText();
 
             container.add(color, constraintsColor);
         }
@@ -147,6 +152,28 @@ public class ColorPalette extends JFrame implements ChangeListener {
         if(event.getSource() == sliderRed || event.getSource() == sliderBlue || event.getSource() == sliderGreen){
             color.setBackground(new Color(sliderRed.getValue(), sliderGreen.getValue(), sliderBlue.getValue()));
         }
+        copyHexColorToClipboard(getCurrentHexColor());
+
+        toolTipColorText();
+
+    }
+
+    private String getCurrentHexColor(){
+        Color curColor = color.getBackground();
+        return "#" + Integer.toHexString(curColor.getRed()) + Integer.toHexString(curColor.getGreen()) + Integer.toHexString(curColor.getBlue());
+
+    }
+
+    private void toolTipColorText(){
+
+        color.setToolTipText(getCurrentHexColor());
+    }
+
+    private void copyHexColorToClipboard(String hexColorText){
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Clipboard clipboard = toolkit.getSystemClipboard();
+        StringSelection selection = new StringSelection(hexColorText);
+        clipboard.setContents(selection, selection);
     }
 
 }
