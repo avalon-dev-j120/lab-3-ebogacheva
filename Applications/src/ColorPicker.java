@@ -42,8 +42,10 @@ public class ColorPicker extends JFrame implements ChangeListener {
             GridBagConstraints constraintsColor = new GridBagConstraints();
             constraintsColor.gridx = 0;
             constraintsColor.gridy = 0;
-            constraintsColor.weightx = 3;
-            constraintsColor.weighty = 2;
+            constraintsColor.gridwidth = 3;
+            constraintsColor.gridheight = 2;
+            constraintsColor.weightx = 1;
+            constraintsColor.weighty = 1;
             constraintsColor.insets = new Insets(5,5,5,5);
             constraintsColor.fill = GridBagConstraints.BOTH;
 
@@ -76,8 +78,10 @@ public class ColorPicker extends JFrame implements ChangeListener {
             GridBagConstraints constraintsLabelSet = new GridBagConstraints();
             constraintsLabelSet.gridx = 4;
             constraintsLabelSet.gridy = 0;
+            constraintsLabelSet.gridwidth = 1;
+            constraintsLabelSet.gridheight = 2;
             constraintsLabelSet.weightx = 0.2;
-            constraintsLabelSet.weighty = 2;
+            constraintsLabelSet.weighty = 1;
             constraintsLabelSet.insets = new Insets(0, 5, 25, 0);
             constraintsLabelSet.anchor = GridBagConstraints.LINE_START;
             constraintsLabelSet.fill = GridBagConstraints.BOTH;
@@ -134,8 +138,10 @@ public class ColorPicker extends JFrame implements ChangeListener {
             GridBagConstraints constraintsSliderSet = new GridBagConstraints();
             constraintsSliderSet.gridx = 5;
             constraintsSliderSet.gridy = 0;
-            constraintsSliderSet.weightx = 4;
-            constraintsSliderSet.weighty = 2;
+            constraintsSliderSet.gridheight = 2;
+            constraintsSliderSet.gridwidth = 4;
+            constraintsSliderSet.weightx = 1;
+            constraintsSliderSet.weighty = 1;
             constraintsSliderSet.insets = new Insets(10,0,5,5);
             constraintsSliderSet.fill = GridBagConstraints.BOTH;
 
