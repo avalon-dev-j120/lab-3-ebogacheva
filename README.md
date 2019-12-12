@@ -171,7 +171,7 @@ public class СolorPalette extends JFrame {
 
 #### Интерфейс приложения
 
-![Интерфейс приложения "Калькулятор"](https://raw.githubusercontent.com/avalon-dev-j20/lab-3/master/UI%20Prototypes/Calculator.png)
+![Интерфейс приложения "Калькулятор"](https://raw.githubusercontent.com/avalon-dev-j20/lab-3/master/UI%20Prototypes/CalculatorGUI.png)
 
 #### Требования к приложению
 
