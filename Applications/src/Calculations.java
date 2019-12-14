@@ -25,7 +25,17 @@ public class Calculations {
         operatorButtons = calculator.getOperatorButtons();
     }
 
-    public void actionsByButtons(String buttonValue){
+    private void clearData(){
+        buffer1 = "0";
+        buffer2 = "";
+        operator = "";
+        operatorSet = false;
+        dotSet1 = false;
+        dotSet2 = false;
+        curResult = "";
+    }
+
+    public void handleButtonsInput(String buttonValue){
         if (buttonValue.equals("CE")){
             clearData();
             resultField.setText(buffer1);
@@ -54,10 +64,10 @@ public class Calculations {
                 }
             } else if (operatorSet && operatorButtons.containsValue(buttonValue)) {
                 if (buttonValue.equals("=")) {
-                    curResult=calculate(buffer1, "", "");
+                    curResult = calculate(buffer1, "", "");
                     copyCurResultToClipboard(curResult);
                     resultField.setText(curResult);
-                    buffer1=curResult;
+                    buffer1 = curResult;
                     operator = "=";
                     operatorSet = true;
                 } else {
@@ -99,6 +109,30 @@ public class Calculations {
         }
     }
 
+    private String addNumbersBuffer1(String curStr){
+
+        if (buffer1.equals("0") && (!dotSet1)) {
+            if (curStr.equals(".")) {
+                buffer1 += curStr;
+                dotSet1 = true;
+            } else {
+                buffer1 = curStr;
+            }
+        } else if (!buffer1.equals("0") && (!dotSet1)) {
+            if (curStr.equals(".")) {
+                buffer1 += curStr;
+                dotSet1 = true;
+            } else {
+                buffer1 += curStr;
+            }
+        } else if (!buffer1.equals("0") && dotSet1) {
+            if (!curStr.equals(".")) {
+                buffer1 += curStr;
+            }
+        }
+        return buffer1;
+    }
+
     private String addNumbersBuffer2(String curString){
         if (buffer2.equals("") && (!dotSet2)) {
             if (curString.equals(".")) {
@@ -122,31 +156,6 @@ public class Calculations {
             }
         }
         return buffer2;
-    }
-
-
-    private String addNumbersBuffer1(String curStr){
-
-        if (buffer1.equals("0") && (!dotSet1)) {
-            if (curStr.equals(".")) {
-                buffer1 += curStr;
-                dotSet1 = true;
-            } else {
-                buffer1 = curStr;
-            }
-        } else if (!buffer1.equals("0") && (!dotSet1)) {
-            if (curStr.equals(".")) {
-                buffer1 += curStr;
-                dotSet1 = true;
-            } else {
-                buffer1 += curStr;
-            }
-        } else if (!buffer1.equals("0") && dotSet1) {
-            if (!curStr.equals(".")) {
-                buffer1 += curStr;
-            }
-        }
-        return buffer1;
     }
 
     private String calculate(String buf1, String op, String buf2){
@@ -186,16 +195,6 @@ public class Calculations {
 
         clearData();
         return String.valueOf(result);
-    }
-
-    private void clearData(){
-        buffer1 = "0";
-        buffer2 = "";
-        operator = "";
-        operatorSet = false;
-        dotSet1 = false;
-        dotSet2 = false;
-        curResult = "";
     }
 
     private void copyCurResultToClipboard(String curResult){

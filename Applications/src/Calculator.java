@@ -145,25 +145,26 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
     @Override
     public void actionPerformed(ActionEvent event) {
 
-        JButton button=(JButton) event.getSource();
+        JButton button=(JButton)event.getSource();
         if (numberButtons.containsKey(button)){
-            calculations.actionsByButtons(numberButtons.get(button));
+            calculations.handleButtonsInput(numberButtons.get(button));
         } else if (operatorButtons.containsKey(button)){
-            calculations.actionsByButtons(operatorButtons.get(button));
+            calculations.handleButtonsInput(operatorButtons.get(button));
         } else if (button.equals(clear)){
-            calculations.actionsByButtons("CE");
+            calculations.handleButtonsInput("CE");
         }
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
+
         String s = String.valueOf(e.getKeyChar());
         if (operatorButtons.containsValue(s)){
-            calculations.actionsByButtons(s);
+            calculations.handleButtonsInput(s);
         } else if (numberButtons.containsValue(s)){
-            calculations.actionsByButtons(s);
+            calculations.handleButtonsInput(s);
         } if (s.equals("\n")){
-            calculations.actionsByButtons("=");
+            calculations.handleButtonsInput("=");
         }
     }
 
