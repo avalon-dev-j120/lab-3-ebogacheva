@@ -11,26 +11,17 @@ public class ColorPicker extends JFrame implements ChangeListener {
 
     private JPanel color;
 
-    private JLabel labelRed;
-    private JLabel labelGreen;
-    private JLabel labelBlue;
-    private JPanel labelSet;
-
     private JSlider sliderRed;
     private JSlider sliderGreen;
     private JSlider sliderBlue;
-    private JPanel sliderSet;
-
-    private final Font labelFont = new Font("Arial", Font.PLAIN, 12);
-
 
     public ColorPicker()  {
 
-
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(true);
-        setSize(600, 200);
+        setSize(600, 250);
         setTitle("Color Picker");
+        Font labelFont = new Font("Arial", Font.PLAIN, 12);
 
         Container container = getContentPane();
         GridBagLayout layout = new GridBagLayout();
@@ -39,54 +30,32 @@ public class ColorPicker extends JFrame implements ChangeListener {
 
         // Initialization of the ColorPanel
         {
-            GridBagConstraints constraintsColor = new GridBagConstraints();
-            constraintsColor.gridx = 0;
-            constraintsColor.gridy = 0;
-            constraintsColor.gridwidth = 3;
-            constraintsColor.gridheight = 2;
-            constraintsColor.weightx = 1;
-            constraintsColor.weighty = 1;
-            constraintsColor.insets = new Insets(5,5,5,5);
-            constraintsColor.fill = GridBagConstraints.BOTH;
-
             color = new JPanel();
             color.setPreferredSize(new Dimension(100, 100));
             color.setBackground(new Color(125, 125, 125));
-
             toolTipColorText();
-
-            container.add(color, constraintsColor);
+            Insets insets = new Insets(2,2,2,2);
+            addComponentToContainer(color, container, 0,0,3,2, 1, 1, insets);
         }
 
         // Initialization of the LabelSet
         {
-
-            labelRed = new JLabel("Red:");
+            JLabel labelRed = new JLabel("Red:");
             labelRed.setFont(labelFont);
-            labelGreen = new JLabel("Green:");
+            JLabel labelGreen = new JLabel("Green:");
             labelGreen.setFont(labelFont);
-            labelBlue = new JLabel("Blue:");
+            JLabel labelBlue = new JLabel("Blue:");
             labelBlue.setFont(labelFont);
 
-            labelSet = new JPanel();
+            JPanel labelSet = new JPanel();
             GridLayout labelSetLayout = new GridLayout(3, 1);
             labelSet.setLayout(labelSetLayout);
             labelSet.add(labelRed);
             labelSet.add(labelGreen);
             labelSet.add(labelBlue);
 
-            GridBagConstraints constraintsLabelSet = new GridBagConstraints();
-            constraintsLabelSet.gridx = 4;
-            constraintsLabelSet.gridy = 0;
-            constraintsLabelSet.gridwidth = 1;
-            constraintsLabelSet.gridheight = 2;
-            constraintsLabelSet.weightx = 0.2;
-            constraintsLabelSet.weighty = 1;
-            constraintsLabelSet.insets = new Insets(0, 5, 25, 0);
-            constraintsLabelSet.anchor = GridBagConstraints.LINE_START;
-            constraintsLabelSet.fill = GridBagConstraints.BOTH;
-
-            container.add(labelSet, constraintsLabelSet);
+            Insets insets = new Insets(0, 5, 25, 0);
+            addComponentToContainer(labelSet, container, 4,0,1,2, 0.2, 1, insets);
         }
 
         // Initialization of the Slider Set
@@ -95,83 +64,81 @@ public class ColorPicker extends JFrame implements ChangeListener {
             sliderRed.setMajorTickSpacing(17);
             sliderRed.setPaintLabels(true);
             sliderRed.setFont(labelFont);
-            Dictionary dictionary = sliderRed.getLabelTable();
-            int i = 17;
-            while (i < 255){
-                dictionary.remove(i);
-                i = i + 17;
-            }
+            setSliderDictionary(sliderRed.getLabelTable());
             sliderRed.addChangeListener(this);
             sliderRed.setPaintTicks(true);
+
             sliderGreen = new JSlider(0, 255, 125);
             sliderGreen.setMajorTickSpacing(17);
             sliderGreen.setPaintLabels(true);
             sliderGreen.setFont(labelFont);
-            Dictionary dictionary2 = sliderGreen.getLabelTable();
-            int i2 = 17;
-            while (i2 < 255){
-                dictionary2.remove(i2);
-                i2 = i2 + 17;
-            }
+            setSliderDictionary(sliderGreen.getLabelTable());
             sliderGreen.addChangeListener(this);
             sliderGreen.setPaintTicks(true);
+
             sliderBlue = new JSlider(0, 255, 125);
             sliderBlue.setMajorTickSpacing(17);
             sliderBlue.setFont(labelFont);
             sliderBlue.setPaintLabels(true);
-            Dictionary dictionary3 = sliderBlue.getLabelTable();
-            int i3 = 17;
-            while (i3 < 255){
-                dictionary3.remove(i3);
-                i3 = i3 + 17;
-            }
+            setSliderDictionary(sliderBlue.getLabelTable());
             sliderBlue.setPaintTicks(true);
             sliderBlue.addChangeListener(this);
 
-            sliderSet = new JPanel();
+            JPanel sliderSet = new JPanel();
             GridLayout sliderSetLayout = new GridLayout(3, 1);
             sliderSet.setLayout(sliderSetLayout);
             sliderSet.add(sliderRed);
             sliderSet.add(sliderGreen);
             sliderSet.add(sliderBlue);
 
-            GridBagConstraints constraintsSliderSet = new GridBagConstraints();
-            constraintsSliderSet.gridx = 5;
-            constraintsSliderSet.gridy = 0;
-            constraintsSliderSet.gridheight = 2;
-            constraintsSliderSet.gridwidth = 4;
-            constraintsSliderSet.weightx = 1;
-            constraintsSliderSet.weighty = 1;
-            constraintsSliderSet.insets = new Insets(10,0,5,5);
-            constraintsSliderSet.fill = GridBagConstraints.BOTH;
-
-            container.add(sliderSet, constraintsSliderSet);
-
-
+            Insets insets = new Insets(10,0,5,5);
+            addComponentToContainer(sliderSet, container, 5,0,2,4,1,1,insets);
         }
 
         setVisible(true);
-
     }
+
+    private void addComponentToContainer(JComponent component, Container container, int x, int y,
+                                         int dx, int dy, double wx, double wy, Insets insets){
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = x;
+        constraints.gridy = y;
+        constraints.gridwidth = dx;
+        constraints.gridheight = dy;
+        constraints.weightx = wx;
+        constraints.weighty = wy;
+        constraints.insets = insets;
+        constraints.fill = GridBagConstraints.BOTH;
+
+        container.add(component, constraints);
+    }
+
+    private void setSliderDictionary(Dictionary dictionary){
+        int i = 17;
+        while (i < 255) {
+            dictionary.remove(i);
+            i=i + 17;
+        }
+    }
+
     @Override
     public void stateChanged(ChangeEvent event){
         if(event.getSource() == sliderRed || event.getSource() == sliderBlue || event.getSource() == sliderGreen){
             color.setBackground(new Color(sliderRed.getValue(), sliderGreen.getValue(), sliderBlue.getValue()));
         }
         copyHexColorToClipboard(getCurrentHexColor());
-
         toolTipColorText();
-
     }
 
     private String getCurrentHexColor(){
         Color curColor = color.getBackground();
-        return "#" + Integer.toHexString(curColor.getRed()) + Integer.toHexString(curColor.getGreen()) + Integer.toHexString(curColor.getBlue());
+        return "#" + Integer.toHexString(curColor.getRed()) +
+                Integer.toHexString(curColor.getGreen()) +
+                Integer.toHexString(curColor.getBlue());
 
     }
 
     private void toolTipColorText(){
-
         color.setToolTipText(getCurrentHexColor());
     }
 
@@ -181,5 +148,7 @@ public class ColorPicker extends JFrame implements ChangeListener {
         StringSelection selection = new StringSelection(hexColorText);
         clipboard.setContents(selection, selection);
     }
+
+
 
 }

@@ -17,12 +17,10 @@ import javax.swing.border.EtchedBorder;
 public class Calculator extends JFrame implements ActionListener, KeyListener{
     
     private JLabel resultField;
-
     private HashMap<JButton, String> numberButtons;
     private HashMap<JButton, String> operatorButtons;
     private JButton clear;
     private Calculations calculations;
-
     private Font font = new Font("Arial", Font.BOLD, 20);
 
 
@@ -144,6 +142,7 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
         return button;
     }
 
+    @Override
     public void actionPerformed(ActionEvent event) {
 
         JButton button=(JButton) event.getSource();
@@ -155,8 +154,6 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
             calculations.actionsByButtons("CE");
         }
     }
-
-
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -192,7 +189,4 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
         return operatorButtons;
     }
 
-    public JButton getClear() {
-        return clear;
-    }
 }

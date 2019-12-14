@@ -107,11 +107,11 @@ public class Calculations {
                 buffer2 = curString;
             }
         } else if (!buffer2.equals("") && (!dotSet2)) {
-            if (curString.equals("0") && buffer2.equals("0")){
-                buffer2 = curString;
-            } else if (curString.equals(".")) {
+            if (curString.equals(".")) {
                 buffer2 += curString;
                 dotSet2 = true;
+            } else if (buffer2.equals("0")){
+                buffer2 = curString;
             } else {
                 buffer2 += curString;
             }
