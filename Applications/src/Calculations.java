@@ -6,19 +6,20 @@ import java.util.HashMap;
 
 public class Calculations {
 
-    private String buffer1 = "0";
-    private String buffer2 = "";
-    private String operator = "";
-    private boolean operatorSet = false;
-    private boolean dotSet1 = false;
-    private boolean dotSet2 = false;;
-    private String curResult = "";
+    private String buffer1;
+    private String buffer2;
+    private String operator;
+    private boolean operatorSet;
+    private boolean dotSet1;
+    private boolean dotSet2;
+    private String curResult;
 
     private JLabel resultField;
     private HashMap<JButton, String> numberButtons;
     private HashMap<JButton, String> operatorButtons;
 
     public Calculations(Calculator calculator) {
+        clearData();
         resultField = calculator.getResultField();
         numberButtons = calculator.getNumberButtons();
         operatorButtons = calculator.getOperatorButtons();
@@ -190,8 +191,8 @@ public class Calculations {
     private void clearData(){
         buffer1 = "0";
         buffer2 = "";
-        operatorSet = false;
         operator = "";
+        operatorSet = false;
         dotSet1 = false;
         dotSet2 = false;
         curResult = "";
