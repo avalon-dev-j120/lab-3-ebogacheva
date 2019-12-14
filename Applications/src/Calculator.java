@@ -182,6 +182,7 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
                     resultField.setText(curResult);
                     buffer1 = curResult;
                     operatorSet = true;
+                    operator = "=";
                 } else {
                     operator = buttonValue;
                     operatorSet = true;
@@ -192,13 +193,20 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
                     copyCurResultToClipboard(curResult);
                     resultField.setText(curResult);
                     buffer1=curResult;
+                    operator = "=";
+                    operatorSet = true;
                 } else {
                     operator = buttonValue;
                 }
             } else if(operatorSet && numberButtons.containsValue(buttonValue) && !curResult.equals("")) {
-                clearData();
-                buffer1 = addNumbersBuffer1(buttonValue);
-                resultField.setText(buffer1);
+                if (operator.equals("=")) {
+                    clearData();
+                    buffer1=addNumbersBuffer1(buttonValue);
+                    resultField.setText(buffer1);
+                } else {
+                    buffer2 = addNumbersBuffer2(buttonValue);
+                    resultField.setText(buffer2);
+                }
             } else if (operatorSet && numberButtons.containsValue(buttonValue)){
                 buffer2 = addNumbersBuffer2(buttonValue);
                 resultField.setText(buffer2);
