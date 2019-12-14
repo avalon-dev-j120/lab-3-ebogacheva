@@ -39,7 +39,7 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
         numberButtons = new HashMap<>();
         operatorButtons = new HashMap<>();
 
-        calculations = new Calculations(this);
+        calculations = new Calculations();
 
         // Buttons of calculator initialization
         {
@@ -141,26 +141,37 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
     public void actionPerformed(ActionEvent event) {
 
         JButton button=(JButton)event.getSource();
+        String output = null;
         if (numberButtons.containsKey(button)){
-            calculations.handleButtonsInput(numberButtons.get(button));
+            output = calculations.handleInput(numberButtons.get(button));
         } else if (operatorButtons.containsKey(button)){
-            calculations.handleButtonsInput(operatorButtons.get(button));
+            output = calculations.handleInput(operatorButtons.get(button));
         } else if (button.equals(clear)){
-            calculations.handleButtonsInput("CE");
+            output = calculations.handleInput("CE");
         }
+        assignOutput(output);
+    }
+
+    private void assignOutput(String output) {
+        if (output == null) {
+            return;
+        }
+        resultField.setText(output);
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
 
         String s = String.valueOf(e.getKeyChar());
+        String output = null;
         if (operatorButtons.containsValue(s)){
-            calculations.handleButtonsInput(s);
+            output = calculations.handleInput(s);
         } else if (numberButtons.containsValue(s)){
-            calculations.handleButtonsInput(s);
+            output = calculations.handleInput(s);
         } if (s.equals("\n")){
-            calculations.handleButtonsInput("=");
+            output = calculations.handleInput("=");
         }
+        assignOutput(output);
     }
 
     @Override

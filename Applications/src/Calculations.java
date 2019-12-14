@@ -2,7 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Calculations {
 
@@ -14,15 +15,37 @@ public class Calculations {
     private boolean dotSet2;
     private String curResult;
 
-    private JLabel resultField;
-    private HashMap<JButton, String> numberButtons;
-    private HashMap<JButton, String> operatorButtons;
+    private Set<String> numberCharacters;
+    private Set<String> operators;
 
-    public Calculations(Calculator calculator) {
+    public Calculations() {
         clearData();
-        resultField = calculator.getResultField();
-        numberButtons = calculator.getNumberButtons();
-        operatorButtons = calculator.getOperatorButtons();
+
+        numberCharacters = new HashSet<>() {
+            {
+                add("0");
+                add("1");
+                add("2");
+                add("3");
+                add("4");
+                add("5");
+                add("6");
+                add("7");
+                add("8");
+                add("9");
+                add(".");
+            }
+        };
+
+        operators = new HashSet<>() {
+            {
+                add("+");
+                add("-");
+                add("*");
+                add("/");
+                add("=");
+            }
+        };
     }
 
     private void clearData(){
@@ -35,78 +58,83 @@ public class Calculations {
         curResult = "";
     }
 
-    public void handleButtonsInput(String buttonValue){
-        if (buttonValue.equals("CE")){
+    public String handleInput(String inputValue){
+        if (inputValue.equals("CE")){
             clearData();
-            resultField.setText(buffer1);
+            return buffer1;
         }
 
+        String res = null;
+
         if (buffer2.equals("")) {
-            if (!operatorSet && numberButtons.containsValue(buttonValue) && curResult.equals("")) {
-                buffer1 = addNumbersBuffer1(buttonValue);
-                resultField.setText(buffer1);
-            } else if (!operatorSet && numberButtons.containsValue(buttonValue) && !curResult.equals("")){
+            if (!operatorSet && numberCharacters.contains(inputValue) && curResult.equals("")) {
+                buffer1 = addNumbersBuffer1(inputValue);
+                res = buffer1;
+            } else if (!operatorSet && numberCharacters.contains(inputValue) && !curResult.equals("")){
                 clearData();
-                buffer1 = addNumbersBuffer1(buttonValue);
-                resultField.setText(buffer1);
+                buffer1 = addNumbersBuffer1(inputValue);
+                res = buffer1;
             }
-            if (!operatorSet && operatorButtons.containsValue(buttonValue)) {
-                if (buttonValue.equals("=")) {
-                    curResult = calculate(buffer1, "", "");
+            if (!operatorSet && operators.contains(inputValue)) {
+                if (inputValue.equals("=")) {
+                    //curResult = calculate(buffer1, "", "");
+                    curResult = calculateBuffer1(buffer1);
                     copyCurResultToClipboard(curResult);
-                    resultField.setText(curResult);
+                    res = curResult;
                     buffer1 = curResult;
                     operatorSet = true;
                     operator = "=";
                 } else {
-                    operator = buttonValue;
+                    operator = inputValue;
                     operatorSet = true;
                 }
-            } else if (operatorSet && operatorButtons.containsValue(buttonValue)) {
-                if (buttonValue.equals("=")) {
-                    curResult = calculate(buffer1, "", "");
+            } else if (operatorSet && operators.contains(inputValue)) {
+                if (inputValue.equals("=")) {
+                    //curResult = calculate(buffer1, "", "");
+                    curResult = calculateBuffer1(buffer1);
                     copyCurResultToClipboard(curResult);
-                    resultField.setText(curResult);
+                    res = curResult;
                     buffer1 = curResult;
                     operator = "=";
                     operatorSet = true;
                 } else {
-                    operator = buttonValue;
+                    operator = inputValue;
                 }
-            } else if(operatorSet && numberButtons.containsValue(buttonValue) && !curResult.equals("")) {
+            } else if(operatorSet && numberCharacters.contains(inputValue) && !curResult.equals("")) {
                 if (operator.equals("=")) {
                     clearData();
-                    buffer1=addNumbersBuffer1(buttonValue);
-                    resultField.setText(buffer1);
+                    buffer1=addNumbersBuffer1(inputValue);
+                    res = buffer1;
                 } else {
-                    buffer2 = addNumbersBuffer2(buttonValue);
-                    resultField.setText(buffer2);
+                    buffer2 = addNumbersBuffer2(inputValue);
+                    res = buffer2;
                 }
-            } else if (operatorSet && numberButtons.containsValue(buttonValue)){
-                buffer2 = addNumbersBuffer2(buttonValue);
-                resultField.setText(buffer2);
+            } else if (operatorSet && numberCharacters.contains(inputValue)){
+                buffer2 = addNumbersBuffer2(inputValue);
+                res = buffer2;
             }
-        } else if (numberButtons.containsValue(buttonValue)){
-            buffer2 = addNumbersBuffer2(buttonValue);
-            resultField.setText(buffer2);
-        } else if (operatorButtons.containsValue(buttonValue)){
-            if (!buttonValue.equals("=")){
+        } else if (numberCharacters.contains(inputValue)){
+            buffer2 = addNumbersBuffer2(inputValue);
+            res = buffer2;
+        } else if (operators.contains(inputValue)){
+            if (!inputValue.equals("=")){
                 curResult = calculate(buffer1 , operator, buffer2);
                 copyCurResultToClipboard(curResult);
-                resultField.setText(curResult);
+                res = curResult;
                 buffer1 = curResult;
-                operator = buttonValue;
+                operator = inputValue;
                 operatorSet = true;
             } else {
                 curResult = calculate(buffer1 , operator, buffer2);
                 copyCurResultToClipboard(curResult);
-                resultField.setText(curResult);
+                res = curResult;
                 buffer1 = curResult;
                 if (buffer1.equals("error")) {
                     clearData();
                 }
             }
         }
+        return res;
     }
 
     private String addNumbersBuffer1(String curStr){
@@ -161,16 +189,9 @@ public class Calculations {
     private String calculate(String buf1, String op, String buf2){
 
         double result;
-        double num2;
 
         double num1 = Double.parseDouble(buf1);
-        if (!buf2.equals("")) {
-            num2=Double.parseDouble(buf2);
-        } else {
-            //have no sense
-            //TODO: change
-            num2 = 0;
-        }
+        double num2=Double.parseDouble(buf2);
 
         switch (op){
             case "+":
@@ -195,6 +216,12 @@ public class Calculations {
 
         clearData();
         return String.valueOf(result);
+    }
+
+    private String calculateBuffer1(String buf1){
+        double num1 = Double.parseDouble(buf1);
+        clearData();
+        return String.valueOf(num1);
     }
 
     private void copyCurResultToClipboard(String curResult){
