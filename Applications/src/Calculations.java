@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -7,12 +6,63 @@ import java.util.Set;
 
 public class Calculations {
 
-    private String buffer1;
-    private String buffer2;
+    final private String RESULT_ERROR = "error";
+
+    private static class Operand {
+
+        final private String defaultValue;
+
+        public String buffer;
+        public boolean dotPresent;
+
+        Operand(String defaultValue) {
+            this.defaultValue = defaultValue;
+            reset();
+        }
+
+        void reset() {
+            buffer = defaultValue;
+            dotPresent = false;
+        }
+
+        public String handleCharacters(String newChar){
+
+            final boolean isDefault = buffer.equals(defaultValue);
+            final boolean newIsDot = newChar.equals(".");
+
+            if (isDefault) {
+                if (newIsDot) {
+                    buffer = "0.";
+                    dotPresent = true;
+                } else {
+                    buffer = newChar;
+                }
+            } else {
+                if (dotPresent) {
+                    if (!newIsDot) {
+                        buffer += newChar;
+                    }
+                } else {
+                    if (newIsDot) {
+                        buffer += newChar;
+                        dotPresent = true;
+                    } else if (defaultValue.isBlank() && buffer.equals("0")){
+                        buffer = newChar;
+                    } else {
+                        buffer += newChar;
+                    }
+                }
+            }
+
+            return buffer;
+        }
+
+    }
+
+    private Operand opL = new Operand("0");
+    private Operand opR = new Operand("");
+
     private String operator;
-    private boolean operatorSet;
-    private boolean dotSet1;
-    private boolean dotSet2;
     private String curResult;
 
     private Set<String> numberCharacters;
@@ -49,87 +99,67 @@ public class Calculations {
     }
 
     private void clearData(){
-        buffer1 = "0";
-        buffer2 = "";
+        opL.reset();
+        opR.reset();
+
         operator = "";
-        operatorSet = false;
-        dotSet1 = false;
-        dotSet2 = false;
+
         curResult = "";
     }
 
-    public String handleInput(String inputValue){
-        if (inputValue.equals("CE")){
+    private boolean isOperatorAssigned() {
+        return !operator.isBlank();
+    }
+
+    private String setNewResult(String result) {
+        curResult = result;
+        copyCurResultToClipboard(curResult);
+        return result;
+    }
+
+    public String handleInput(String input){
+
+        if (input.equals("CE")){
             clearData();
-            return buffer1;
+            return opL.buffer;
         }
+
+        final boolean isNumChar = numberCharacters.contains(input);
+        final boolean isOpChar = operators.contains(input);
 
         String res = null;
 
-        if (buffer2.equals("")) {
-            if (!operatorSet && numberCharacters.contains(inputValue) && curResult.equals("")) {
-                buffer1 = addNumbersBuffer1(inputValue);
-                res = buffer1;
-            } else if (!operatorSet && numberCharacters.contains(inputValue) && !curResult.equals("")){
-                clearData();
-                buffer1 = addNumbersBuffer1(inputValue);
-                res = buffer1;
+        if (opR.buffer.equals("")) {
+            if (isNumChar) {
+                if (!isOperatorAssigned()) {
+                    if (!curResult.equals("")) {
+                        clearData();
+                    }
+                    res = addendToLeft(input);
+                } else {
+                    if(!curResult.equals("") && operator.equals("=")) {
+                        clearData();
+                        res = addendToLeft(input);
+                    } else {
+                        res = appendToRight(input);
+                    }
+                }
+            } else if (isOpChar) {
+                if (input.equals("=")) {
+                    res = setNewResult(calculateBuffer1(opL.buffer));
+                    opL.buffer = curResult;
+                }
+                operator = input;
             }
-            if (!operatorSet && operators.contains(inputValue)) {
-                if (inputValue.equals("=")) {
-                    //curResult = calculate(buffer1, "", "");
-                    curResult = calculateBuffer1(buffer1);
-                    copyCurResultToClipboard(curResult);
-                    res = curResult;
-                    buffer1 = curResult;
-                    operatorSet = true;
-                    operator = "=";
-                } else {
-                    operator = inputValue;
-                    operatorSet = true;
-                }
-            } else if (operatorSet && operators.contains(inputValue)) {
-                if (inputValue.equals("=")) {
-                    //curResult = calculate(buffer1, "", "");
-                    curResult = calculateBuffer1(buffer1);
-                    copyCurResultToClipboard(curResult);
-                    res = curResult;
-                    buffer1 = curResult;
-                    operator = "=";
-                    operatorSet = true;
-                } else {
-                    operator = inputValue;
-                }
-            } else if(operatorSet && numberCharacters.contains(inputValue) && !curResult.equals("")) {
-                if (operator.equals("=")) {
-                    clearData();
-                    buffer1=addNumbersBuffer1(inputValue);
-                    res = buffer1;
-                } else {
-                    buffer2 = addNumbersBuffer2(inputValue);
-                    res = buffer2;
-                }
-            } else if (operatorSet && numberCharacters.contains(inputValue)){
-                buffer2 = addNumbersBuffer2(inputValue);
-                res = buffer2;
-            }
-        } else if (numberCharacters.contains(inputValue)){
-            buffer2 = addNumbersBuffer2(inputValue);
-            res = buffer2;
-        } else if (operators.contains(inputValue)){
-            if (!inputValue.equals("=")){
-                curResult = calculate(buffer1 , operator, buffer2);
-                copyCurResultToClipboard(curResult);
-                res = curResult;
-                buffer1 = curResult;
-                operator = inputValue;
-                operatorSet = true;
+        } else if (isNumChar){
+            res = appendToRight(input);
+        } else if (isOpChar){
+            res = setNewResult(calculate(opL.buffer , operator, opR.buffer));
+            opL.buffer = curResult;
+            if (!input.equals("=")){
+                operator = input;
             } else {
-                curResult = calculate(buffer1 , operator, buffer2);
-                copyCurResultToClipboard(curResult);
-                res = curResult;
-                buffer1 = curResult;
-                if (buffer1.equals("error")) {
+                if (opL.buffer.equals(RESULT_ERROR)) {
                     clearData();
                 }
             }
@@ -137,53 +167,14 @@ public class Calculations {
         return res;
     }
 
-    private String addNumbersBuffer1(String curStr){
 
-        if (buffer1.equals("0") && (!dotSet1)) {
-            if (curStr.equals(".")) {
-                buffer1 += curStr;
-                dotSet1 = true;
-            } else {
-                buffer1 = curStr;
-            }
-        } else if (!buffer1.equals("0") && (!dotSet1)) {
-            if (curStr.equals(".")) {
-                buffer1 += curStr;
-                dotSet1 = true;
-            } else {
-                buffer1 += curStr;
-            }
-        } else if (!buffer1.equals("0") && dotSet1) {
-            if (!curStr.equals(".")) {
-                buffer1 += curStr;
-            }
-        }
-        return buffer1;
+    private String addendToLeft(String curStr){
+        return opL.handleCharacters(curStr);
     }
 
-    private String addNumbersBuffer2(String curString){
-        if (buffer2.equals("") && (!dotSet2)) {
-            if (curString.equals(".")) {
-                buffer2 = "0" + curString;
-                dotSet2 = true;
-            } else {
-                buffer2 = curString;
-            }
-        } else if (!buffer2.equals("") && (!dotSet2)) {
-            if (curString.equals(".")) {
-                buffer2 += curString;
-                dotSet2 = true;
-            } else if (buffer2.equals("0")){
-                buffer2 = curString;
-            } else {
-                buffer2 += curString;
-            }
-        } else if (!buffer2.equals("") && dotSet2) {
-            if (!curString.equals(".")) {
-                buffer2 += curString;
-            }
-        }
-        return buffer2;
+
+    private String appendToRight(String curStr){
+        return opR.handleCharacters(curStr);
     }
 
     private String calculate(String buf1, String op, String buf2){
@@ -191,7 +182,7 @@ public class Calculations {
         double result;
 
         double num1 = Double.parseDouble(buf1);
-        double num2=Double.parseDouble(buf2);
+        double num2 = Double.parseDouble(buf2);
 
         switch (op){
             case "+":
@@ -201,11 +192,11 @@ public class Calculations {
                 result = num1 - num2;
                 break;
             case "*":
-                result = num1*num2;
+                result = num1 * num2;
                 break;
             case "/":
-                if (num2 == 0){
-                    return "error";
+                if (num2 == 0) {
+                    return RESULT_ERROR;
                 } else {
                     result = num1 / num2;
                     break;
