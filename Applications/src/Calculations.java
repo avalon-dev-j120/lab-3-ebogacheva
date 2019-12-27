@@ -4,6 +4,9 @@ import java.awt.datatransfer.StringSelection;
 import java.util.HashSet;
 import java.util.Set;
 
+// Calculator - UI
+// Calculations - logic, processing operations
+
 public class Calculations {
 
     final private String RESULT_ERROR = "error";
@@ -24,7 +27,7 @@ public class Calculations {
             buffer = defaultValue;
             dotPresent = false;
         }
-//
+
         public String handleCharacters(String newChar){
 
             final boolean isDefault = buffer.equals(defaultValue);
