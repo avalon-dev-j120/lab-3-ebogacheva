@@ -24,7 +24,7 @@ public class Calculations {
             buffer = defaultValue;
             dotPresent = false;
         }
-
+//
         public String handleCharacters(String newChar){
 
             final boolean isDefault = buffer.equals(defaultValue);

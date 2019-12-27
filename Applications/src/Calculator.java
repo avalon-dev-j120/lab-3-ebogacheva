@@ -22,7 +22,8 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
     public Calculator(){
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
+        setMaximumSize(new Dimension(600, 600));
         setSize(300, 300);
         setTitle("Calculator");
 
@@ -184,16 +185,5 @@ public class Calculator extends JFrame implements ActionListener, KeyListener{
 
     }
 
-    public JLabel getResultField() {
-        return resultField;
-    }
-
-    public HashMap<JButton, String> getNumberButtons() {
-        return numberButtons;
-    }
-
-    public HashMap<JButton, String> getOperatorButtons() {
-        return operatorButtons;
-    }
 
 }
