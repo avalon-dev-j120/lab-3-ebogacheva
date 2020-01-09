@@ -49,7 +49,7 @@ public class Calculations {
                     if (newIsDot) {
                         buffer += newChar;
                         dotPresent = true;
-                    } else if (defaultValue.isBlank() && buffer.equals("0")){
+                    } else if (defaultValue.isEmpty() && buffer.equals("0")){
                         buffer = newChar;
                     } else {
                         buffer += newChar;
@@ -74,7 +74,7 @@ public class Calculations {
     public Calculations() {
         clearData();
 
-        numberCharacters = new HashSet<>() {
+        numberCharacters = new HashSet<String>() {
             {
                 add("0");
                 add("1");
@@ -90,7 +90,7 @@ public class Calculations {
             }
         };
 
-        operators = new HashSet<>() {
+        operators = new HashSet<String>() {
             {
                 add("+");
                 add("-");
@@ -111,7 +111,7 @@ public class Calculations {
     }
 
     private boolean isOperatorAssigned() {
-        return !operator.isBlank();
+        return !operator.isEmpty();
     }
 
     private String setNewResult(String result) {
